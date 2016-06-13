@@ -1,2 +1,3 @@
-# mithril-debug
+# Mithril inspector
+
 An extension for inspecting &amp; debugging Mithril apps
