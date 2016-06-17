@@ -2289,6 +2289,8 @@
 	  }
 	}
 
+	function box (el) { return el.getBoundingClientRect(); }
+
 	var noop = function () {}
 
 	function dragon ( el, ref ) {
@@ -2333,8 +2335,6 @@
 	  )
 	}
 
-	var rect   = function (el) { return el.getBoundingClientRect(); }
-
 	var locate = function ( x, y ) { return [
 	  Math.round( x / window.innerWidth ),
 	  Math.round( y / window.innerHeight )
@@ -2348,10 +2348,7 @@
 	    color      : '#eee'
 	  },
 
-	  handle : {
-	    padding    : '.5em 1em',
-	    border     : '1px solid'
-	  },
+	  handle : "\n    padding    : .5em 1em;\n    cursor     : -webkit-grab;\n    cursor     : grab;\n    border     : 1px solid;\n  ",
 
 	  loupe : {
 	    padding    : '.5em 1em',
@@ -2365,7 +2362,8 @@
 	  shadow : {
 	    transition : '.15s ease-in-out',
 	    opacity    : '0',
-	    boxShadow  : 'rgba( 0, 0, 0, .5 ) 0 0 50vh 50vh',
+	    position   : 'fixed',
+	    boxShadow  : 'rgba( 0, 0, 0, .5 ) 0 0 50vh 25vh',
 	    width      : '0',
 	    height     : '0'
 	  },
@@ -2411,7 +2409,7 @@
 	  view : function (ctrl) { return m( '.Widget', {
 	      config: function config( el, init, ctxt ){
 	        ctxt.onunload = on( window, {
-	          mouseover : function (e) { return ctrl.inspection = rect( e.target ); },
+	          mouseover : function (e) { return ctrl.inspection = box( e.target ); },
 
 	          click     : function (e) {
 	            if( ctrl.inspecting ){

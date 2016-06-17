@@ -1,10 +1,8 @@
-import m      from 'mithril'
+import m from 'mithril'
+
 import on     from '../utils/on'
 import box    from '../utils/box'
 import dragon from '../utils/drag'
-
-const rect   = el =>
-  el.getBoundingClientRect()
 
 const locate = ( x, y ) => [
   Math.round( x / window.innerWidth ),
@@ -19,10 +17,12 @@ const styles = {
     color      : '#eee'
   },
 
-  handle : {
-    padding    : '.5em 1em',
-    border     : '1px solid'
-  },
+  handle : `
+    padding    : .5em 1em;
+    cursor     : -webkit-grab;
+    cursor     : grab;
+    border     : 1px solid;
+  `,
 
   loupe : {
     padding    : '.5em 1em',
@@ -36,7 +36,8 @@ const styles = {
   shadow : {
     transition : '.15s ease-in-out',
     opacity    : '0',
-    boxShadow  : 'rgba( 0, 0, 0, .5 ) 0 0 50vh 50vh',
+    position   : 'fixed',
+    boxShadow  : 'rgba( 0, 0, 0, .5 ) 0 0 50vh 25vh',
     width      : '0',
     height     : '0'
   },
@@ -82,7 +83,7 @@ export default {
       config( el, init, ctxt ){
         ctxt.onunload = on( window, {
           mouseover : e =>
-            ctrl.inspection = rect( e.target ),
+            ctrl.inspection = box( e.target ),
 
           click     : e => {
             if( ctrl.inspecting ){
