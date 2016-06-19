@@ -11,10 +11,27 @@ const locate = ( x, y ) => [
 
 const styles = {
   controls : {
+    transition : '.15s ease-in-out',
     position   : 'fixed',
     background : '#fff',
     border     : '1px solid',
-    color      : '#eee'
+    color      : '#444'
+  },
+
+  shadow : {
+    transition : '.15s ease-in-out',
+    background : '#ccf',
+    opacity    : '0',
+    position   : 'absolute',
+    height     : '100%',
+    width      : '100%',
+    zIndex     : '-1'
+  },
+
+  shadow_active : {
+    padding    : ' 50vh  50vw',
+    margin     : '-50vh -50vw',
+    opacity    : '.5'
   },
 
   handle : `
@@ -33,15 +50,6 @@ const styles = {
     color      : '#ccf'
   },
 
-  shadow : {
-    transition : '.15s ease-in-out',
-    opacity    : '0',
-    position   : 'fixed',
-    boxShadow  : 'rgba( 0, 0, 0, .5 ) 0 0 50vh 25vh',
-    width      : '0',
-    height     : '0'
-  },
-
   screen : {
     position   : 'fixed'
   },
@@ -55,7 +63,6 @@ export default {
   controller : function(){
     Object.assign( this, {
       controls : [ 1, 0 ],
-      shadow   : [ 1, 0 ],
 
       dragging   : false,
       inspecting : false,
@@ -64,14 +71,13 @@ export default {
 
       hover : e => {
         this.dragging = true
-        this.shadow = locate( e.pageX, e.pageY )
+        this.controls = locate( e.pageX, e.pageY )
 
         m.redraw()
       },
 
       place : e => {
         this.dragging = false
-        this.controls = [ ...this.shadow ]
 
         m.redraw()
       }
@@ -98,10 +104,22 @@ export default {
       m( '.controls', {
         style : {
           ...styles.controls,
-          ...( ctrl.controls[ 0 ] ? { right  : 0 } : { left : 0 } ),
-          ...( ctrl.controls[ 1 ] ? { bottom : 0 } : { top  : 0 } )
+          left      : ctrl.controls[ 0 ] ?  '100%' : '0%',
+          top       : ctrl.controls[ 1 ] ?  '100%' : '0%',
+          transform : `translate( ${
+                      ctrl.controls[ 0 ] ? '-100%' : '0%'
+                    },${
+                      ctrl.controls[ 1 ] ? '-100%' : '0%'
+                    } )`
         }
       },
+        m( '.shadow', {
+          style : {
+            ...styles.shadow,
+            ...( ctrl.dragging && styles.shadow_active )
+          }
+        } ),
+
         m( '.handle', {
           config( el, init, ctxt ){
             ctxt.onunload = dragon( el, {
@@ -111,7 +129,9 @@ export default {
           },
 
           style : styles.handle
-        } ),
+        },
+          m.trust( '&hellip;' )
+        ),
 
         m( '.loupe', {
           onclick(){
@@ -122,7 +142,9 @@ export default {
             ...styles.loupe,
             ...( ctrl.inspecting && styles.loupe_active )
           }
-        } )
+        },
+          'Inspect'
+        )
       ),
 
       m( '.screen', {
@@ -134,16 +156,6 @@ export default {
           top   : ctrl.inspection.top,
           left  : ctrl.inspection.left,
           width : ctrl.inspection.width
-        }
-      } ),
-
-      m( '.shadow', {
-        style : {
-          ...styles.shadow,
-
-          opacity : ctrl.dragging ? 1 : 0,
-          left    : ctrl.shadow[ 0 ] * 100 + '%',
-          top     : ctrl.shadow[ 1 ] * 100 + '%'
         }
       } )
     )

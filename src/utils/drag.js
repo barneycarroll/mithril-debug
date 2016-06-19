@@ -20,6 +20,8 @@ export default ( el, {
     [ window, {
       mousemove : e => {
         if( down ){
+          e.preventDefault()
+
           if( !move )
             start( e )
 
